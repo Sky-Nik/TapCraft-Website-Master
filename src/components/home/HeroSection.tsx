@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import gsap from "gsap";
@@ -14,9 +14,9 @@ import GradientText from "@/components/GradientText";
 gsap.registerPlugin(ScrollTrigger);
 
 const products = [
-  { id: 1, name: "Book Series", desc: "Your favorite book covers, reimagined as keychains", image: "/dummy.jpg" },
-  { id: 2, name: "Social Media Series", desc: "Showcase your digital presence physically", image: "/dummy.jpg" },
-  { id: 3, name: "Custom Icon Series", desc: "Unique icons crafted just for you", image: "/dummy.jpg" },
+  { id: 1, name: "Book Series", desc: "Your favorite book covers, reimagined as keychains", image: "/book-series.png", href: "/catalogue/nfc-book-keychain" },
+  { id: 2, name: "Social Media Series", desc: "Showcase your digital presence physically", image: "/dummy.jpg", href: "/catalogue/nfc-social-media-keychains" },
+  { id: 3, name: "Custom Icon Series", desc: "Unique icons crafted just for you", image: "/custom-series.jpg", href: "/compact" },
 ];
 
 export function HeroSection() {
@@ -72,6 +72,31 @@ export function HeroSection() {
     },
     { scope: sectionRef }
   );
+
+  // Video loading state
+  const [videoLoading, setVideoLoading] = useState(true);
+
+  // Select video source based on screen size
+  const [videoSrc, setVideoSrc] = useState("/introx480.mp4");
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const update = (e: MediaQueryList | MediaQueryListEvent) => {
+      setVideoSrc(e.matches ? "/introx1080.mp4" : "/introx480.mp4");
+    };
+    update(mql);
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  // Reload video when source changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      setVideoLoading(true);
+      video.load();
+    }
+  }, [videoSrc]);
 
   // Video playback control: only play when 80% visible
   useEffect(() => {
@@ -193,8 +218,17 @@ export function HeroSection() {
         {/* Video section - below hero text */}
         <div
           ref={videoContainerRef}
-          className="mt-20 rounded-3xl overflow-hidden border border-white/10"
+          className="relative mt-20 rounded-3xl overflow-hidden border border-white/10"
         >
+          {/* Loading overlay */}
+          <div
+            className={`absolute inset-0 z-10 flex items-center justify-center bg-white/5 backdrop-blur-sm transition-opacity duration-500 ${
+              videoLoading ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-tapcraft-blue" />
+          </div>
+
           <video
             ref={videoRef}
             className="w-full h-auto object-cover aspect-video"
@@ -202,8 +236,9 @@ export function HeroSection() {
             loop
             playsInline
             preload="metadata"
+            onCanPlayThrough={() => setVideoLoading(false)}
           >
-            <source src="/demo.mp4" type="video/mp4" />
+            <source src={videoSrc} type="video/mp4" />
           </video>
         </div>
 
@@ -222,9 +257,10 @@ export function HeroSection() {
         </div>
         <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {products.map((product) => (
-            <div
+            <Link
               key={product.id}
-              className="group relative rounded-2xl overflow-hidden bg-white/[0.07] backdrop-blur-xl border border-white/10 transition-[border-color] duration-500 hover:border-tapcraft-blue/50 p-4"
+              href={product.href}
+              className="group relative rounded-2xl overflow-hidden bg-white/[0.07] backdrop-blur-xl border border-white/10 transition-[border-color] duration-500 hover:border-tapcraft-blue/50 p-4 no-underline"
             >
               <div className="aspect-square rounded-xl overflow-hidden mb-4">
                 <Image
@@ -244,7 +280,7 @@ export function HeroSection() {
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-600 shrink-0 group-hover:text-tapcraft-blue group-hover:translate-x-1 transition-[color] duration-300" />
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

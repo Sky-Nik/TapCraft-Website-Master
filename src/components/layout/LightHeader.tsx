@@ -75,7 +75,8 @@ export function LightHeader() {
 
           {/* Right: Action Icons */}
           <div className="flex items-center gap-2">
-            <SearchModal variant="light" />
+            {/* TODO: Re-enable search when ready */}
+            {/* <SearchModal variant="light" /> */}
             <CartIcon variant="light" />
             {/* TODO: Re-enable account features post-MVP */}
             {/* Mobile hamburger */}

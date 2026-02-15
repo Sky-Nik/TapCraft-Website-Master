@@ -3,9 +3,11 @@ import { ViewTransitions } from "next-view-transitions";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { siteMetadata } from "@/lib/seo/metadata";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteMetadata.siteUrl),
   title: {
     default: "TapCraft Studio | Custom 3D + NFC Products | Melbourne",
     template: "%s | TapCraft Studio",
@@ -21,13 +23,25 @@ export const metadata: Metadata = {
     "custom NFC products Australia",
   ],
   authors: [{ name: "TapCraft Studio" }],
+  creator: "TapCraft Studio",
+  publisher: "TapCraft Studio",
   openGraph: {
     type: "website",
     locale: "en_AU",
+    url: siteMetadata.siteUrl,
     siteName: "TapCraft Studio",
     title: "TapCraft Studio | Custom 3D + NFC Products | Melbourne",
     description:
       "Melbourne-based 3D printing studio creating smart, NFC-enabled products. From business cards to event tags, we bridge the physical and digital worlds.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TapCraft Studio | Custom 3D + NFC Products",
+    description: "Melbourne-made smart products. Custom 3D + NFC.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

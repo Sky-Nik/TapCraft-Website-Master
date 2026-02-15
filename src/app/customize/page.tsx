@@ -10,6 +10,8 @@ import ThreeDViewer from "@/components/customize/ThreeDViewer";
 import CustomizationPanel from "@/components/customize/CustomizationPanel";
 import PriceEstimator from "@/components/customize/PriceEstimator";
 import ContactForm from "@/components/customize/ContactForm";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { customizeSchema } from "@/lib/seo/metadata";
 
 const DEFAULT_CONFIG: CustomizationConfig = {
   ...DEFAULT_CUSTOMIZATION_CONFIG,
@@ -68,6 +70,7 @@ export default function CustomizePage() {
 
   return (
     <>
+      <StructuredData data={customizeSchema} />
       <LightHeader />
       <div className="flex min-h-screen flex-col bg-gray-50">
         {/* Toolbar */}

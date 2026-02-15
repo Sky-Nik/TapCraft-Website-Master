@@ -16,6 +16,8 @@ import { LightHeader } from '@/components/layout/LightHeader';
 // import { Button } from '@/components/shared/Button';
 import { ProductCard } from '@/components/catalogue/ProductCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { StructuredData } from '@/components/seo/StructuredData';
+import { catalogueSchema } from '@/lib/seo/metadata';
 
 // // Map category slugs to the category IDs used in product data
 // const CATEGORY_SLUG_TO_ID: Record<string, string> = {};
@@ -198,6 +200,7 @@ export default function CataloguePage() {
 
   return (
     <>
+      <StructuredData data={catalogueSchema} />
       <LightHeader />
       <div className="min-h-screen bg-gray-50/30">
         {/* Page header */}

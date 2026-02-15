@@ -15,7 +15,6 @@ interface ProductGridProps {
   isLoading?: boolean;
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
-  onQuickView: (product: Product) => void;
 }
 
 const SORT_OPTIONS: { label: string; value: SortOption }[] = [
@@ -55,7 +54,6 @@ export function ProductGrid({
   isLoading = false,
   sortBy,
   onSortChange,
-  onQuickView,
 }: ProductGridProps) {
   if (isLoading) {
     return (
@@ -147,7 +145,6 @@ export function ProductGrid({
             <ProductCard
               key={product.id}
               product={product}
-              onQuickView={onQuickView}
             />
           ))}
         </div>

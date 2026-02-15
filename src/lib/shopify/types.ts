@@ -3,6 +3,12 @@ export interface ShopifyPrice {
   currencyCode: string;
 }
 
+export interface ShopifyMetafield {
+  namespace: string;
+  key: string;
+  value: string;
+}
+
 export interface ShopifyImage {
   url: string;
   altText: string | null;
@@ -48,6 +54,7 @@ export interface ShopifyProduct {
     }[];
   };
   featuredImage: ShopifyImage | null;
+  metafields?: (ShopifyMetafield | null)[];
 }
 
 export interface ShopifyCollection {

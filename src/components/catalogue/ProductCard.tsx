@@ -1,8 +1,8 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Product } from '@/types/product';
 import {
   formatPrice,
-  formatDimensions,
   formatProductionTime,
 } from '@/lib/utils/formatting';
 import { ImagePlaceholder } from '@/components/shared/ImagePlaceholder';
@@ -11,7 +11,6 @@ import { Button } from '@/components/shared/Button';
 
 interface ProductCardProps {
   product: Product;
-  onQuickView: (product: Product) => void;
 }
 
 function getProductBadge(
@@ -24,22 +23,41 @@ function getProductBadge(
   return null;
 }
 
-export function ProductCard({ product, onQuickView }: ProductCardProps) {
+function isPlaceholderImage(src: string): boolean {
+  return src.startsWith('/images/');
+}
+
+export function ProductCard({ product }: ProductCardProps) {
   const badge = getProductBadge(product.tags);
   const prodTime = formatProductionTime(product.specifications.productionTime);
+  const mainImage = product.images[0];
+  const isPlaceholder = !mainImage || isPlaceholderImage(mainImage.src);
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-[box-shadow,border-color] duration-300 hover:shadow-lg hover:shadow-gray-200/50 hover:border-gray-300">
+    <Link
+      href={`/catalogue/${product.slug}`}
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-[box-shadow,border-color] duration-300 hover:shadow-lg hover:shadow-gray-200/50 hover:border-gray-300 no-underline"
+    >
       {/* Image area */}
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
-          <ImagePlaceholder
-            width={800}
-            height={800}
-            name={product.name}
-            type="3d"
-            className="h-full w-full rounded-none border-0"
-          />
+          {isPlaceholder ? (
+            <ImagePlaceholder
+              width={800}
+              height={800}
+              name={product.name}
+              type="3d"
+              className="h-full w-full rounded-none border-0"
+            />
+          ) : (
+            <Image
+              src={mainImage.src}
+              alt={mainImage.alt}
+              width={mainImage.width}
+              height={mainImage.height}
+              className="h-full w-full object-cover"
+            />
+          )}
         </div>
 
         {/* Badge */}
@@ -49,17 +67,9 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           </div>
         )}
 
-        {/* Quick View overlay on hover */}
+        {/* View Details overlay on hover */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-[background-color,opacity] duration-300 group-hover:bg-black/10 group-hover:opacity-100">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              onQuickView(product);
-            }}
-            className="translate-y-2 opacity-0 transition-[transform,opacity] duration-300 group-hover:translate-y-0 group-hover:opacity-100"
-          >
+          <span className="inline-flex items-center gap-2 rounded-lg bg-tapcraft-blue px-4 py-2 text-sm font-semibold text-white shadow-sm translate-y-2 opacity-0 transition-[transform,opacity] duration-300 group-hover:translate-y-0 group-hover:opacity-100">
             <svg
               className="h-4 w-4"
               fill="none"
@@ -70,16 +80,11 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
               />
             </svg>
-            Quick View
-          </Button>
+            View Details
+          </span>
         </div>
       </div>
 
@@ -147,19 +152,14 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
 
         {/* Actions */}
         <div className="mt-3 flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onQuickView(product)}
-            className="flex-1"
-          >
-            Quick View
-          </Button>
+          <span className="inline-flex items-center justify-center flex-1 h-8 px-3 text-sm rounded-md font-semibold text-tapcraft-blue bg-transparent hover:bg-tapcraft-blue/10 transition-colors duration-200">
+            View Details
+          </span>
           <Button variant="primary" size="sm" className="flex-1" asChild>
-            <Link href={`/customize?base=${product.slug}`}>Customize</Link>
+            <span>Customize</span>
           </Button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Product } from '@/types/product';
 import { MOCK_PRODUCTS, MOCK_CATEGORIES } from '@/lib/constants/products';
+import { getAllProducts } from '@/lib/shopify/client';
+import { transformShopifyProducts } from '@/lib/shopify/transformer';
 import { LightHeader } from '@/components/layout/LightHeader';
 import { CategoryNav } from '@/components/catalogue/CategoryNav';
 import {
@@ -11,8 +13,8 @@ import {
   type FilterState,
 } from '@/components/catalogue/FilterSidebar';
 import { ProductGrid, type SortOption } from '@/components/catalogue/ProductGrid';
-import { QuickView } from '@/components/catalogue/QuickView';
 import { Button } from '@/components/shared/Button';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 // Map category slugs to the category IDs used in product data
 const CATEGORY_SLUG_TO_ID: Record<string, string> = {};
@@ -92,26 +94,43 @@ function sortProducts(products: Product[], sortBy: SortOption): Product[] {
 }
 
 export default function CataloguePage() {
+  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('all');
   const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(
-    null,
-  );
-  const [quickViewOpen, setQuickViewOpen] = useState(false);
 
-  const handleQuickView = useCallback((product: Product) => {
-    setQuickViewProduct(product);
-    setQuickViewOpen(true);
-  }, []);
+  // Fetch products from Shopify on mount
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setIsLoading(true);
+        const shopifyResponse = await getAllProducts();
 
-  const handleCloseQuickView = useCallback(() => {
-    setQuickViewOpen(false);
+        if (shopifyResponse) {
+          const transformedProducts = transformShopifyProducts(shopifyResponse);
+          if (transformedProducts.length > 0) {
+            setProducts(transformedProducts);
+          } else {
+            setProducts(MOCK_PRODUCTS);
+          }
+        } else {
+          setProducts(MOCK_PRODUCTS);
+        }
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+        setProducts(MOCK_PRODUCTS);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchProducts();
   }, []);
 
   const filteredProducts = useMemo(() => {
-    let results = [...MOCK_PRODUCTS];
+    let results = [...products];
 
     // Filter by category
     if (activeCategory !== 'all') {
@@ -167,7 +186,7 @@ export default function CataloguePage() {
 
     // Sort
     return sortProducts(results, sortBy);
-  }, [activeCategory, filters, sortBy]);
+  }, [products, activeCategory, filters, sortBy]);
 
   const activeFilterCount =
     filters.industries.length +
@@ -182,87 +201,85 @@ export default function CataloguePage() {
       <div className="min-h-screen bg-gray-50/30">
         {/* Page header */}
         <div className="bg-white border-b border-gray-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <p className="text-tapcraft-blue text-sm font-semibold tracking-widest uppercase mb-3">
-            Our Products
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-normal text-gray-900 tracking-tight">
-            Product Catalogue
-          </h1>
-          <p className="mt-2 text-base sm:text-lg text-gray-500 max-w-2xl">
-            Browse our range of custom 3D-printed NFC products. Every item is
-            made to order in our Melbourne studio and fully customisable to your
-            brand.
-          </p>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+            <p className="text-tapcraft-blue text-sm font-semibold tracking-widest uppercase mb-3">
+              Our Products
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-normal text-gray-900 tracking-tight">
+              Product Catalogue
+            </h1>
+            <p className="mt-2 text-base sm:text-lg text-gray-500 max-w-2xl">
+              Browse our range of custom 3D-printed NFC products. Every item is
+              made to order in our Melbourne studio and fully customisable to your
+              brand.
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Category navigation */}
-      <div className="bg-white border-b border-gray-100 sticky top-20 z-30">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-          <CategoryNav
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-          />
+        {/* Category navigation */}
+        <div className="bg-white border-b border-gray-100 sticky top-20 z-30">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
+            <CategoryNav
+              activeCategory={activeCategory}
+              onCategoryChange={setActiveCategory}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Main content */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* Mobile filter button */}
-        <div className="mb-6 lg:hidden">
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={() => setMobileFiltersOpen(true)}
-            className="w-full sm:w-auto"
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+        {/* Main content */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          {/* Mobile filter button */}
+          <div className="mb-6 lg:hidden">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => setMobileFiltersOpen(true)}
+              className="w-full sm:w-auto"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                />
+              </svg>
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-tapcraft-blue text-[10px] font-semibold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </Button>
+          </div>
+
+          {/* Layout: sidebar + grid */}
+          <div className="flex gap-8">
+            <FilterSidebar
+              isOpen={mobileFiltersOpen}
+              onClose={() => setMobileFiltersOpen(false)}
+              filters={filters}
+              onFiltersChange={setFilters}
+            />
+
+            {isLoading ? (
+              <div className="flex-1 flex items-center justify-center py-20">
+                <LoadingSpinner size="lg" label="Loading products..." />
+              </div>
+            ) : (
+              <ProductGrid
+                products={filteredProducts}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
               />
-            </svg>
-            Filters
-            {activeFilterCount > 0 && (
-              <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-tapcraft-blue text-[10px] font-semibold text-white">
-                {activeFilterCount}
-              </span>
             )}
-          </Button>
+          </div>
         </div>
-
-        {/* Layout: sidebar + grid */}
-        <div className="flex gap-8">
-          <FilterSidebar
-            isOpen={mobileFiltersOpen}
-            onClose={() => setMobileFiltersOpen(false)}
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
-
-          <ProductGrid
-            products={filteredProducts}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            onQuickView={handleQuickView}
-          />
-        </div>
-      </div>
-
-        {/* Quick view modal */}
-        <QuickView
-          product={quickViewProduct}
-          isOpen={quickViewOpen}
-          onClose={handleCloseQuickView}
-        />
       </div>
     </>
   );

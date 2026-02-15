@@ -64,6 +64,16 @@ const PRODUCT_FRAGMENT = gql`
       width
       height
     }
+    metafields(identifiers: [
+      {namespace: "custom", key: "material"},
+      {namespace: "custom", key: "nfc_chip"},
+      {namespace: "custom", key: "production_time"},
+      {namespace: "custom", key: "dimensions"}
+    ]) {
+      namespace
+      key
+      value
+    }
   }
 `;
 

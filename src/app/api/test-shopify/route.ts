@@ -14,8 +14,8 @@ const TEST_QUERY = gql`
 					productType
 					tags
 					vendor
-					availableForSale
-					priceRange {
+					availableForSale					
+          priceRange {
 						minVariantPrice {
 							amount
 							currencyCode
@@ -95,7 +95,7 @@ export async function GET() {
 
     const products = data.products.edges.map((edge) => edge.node);
     const productCount = products.length;
-    const sampleProduct = products[0] || null;
+    const sampleProduct = products || null;
 
     return NextResponse.json({
       success: true,

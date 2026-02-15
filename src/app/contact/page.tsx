@@ -15,13 +15,13 @@ const contactInfo = [
   {
     icon: <Mail className="w-5 h-5" />,
     label: "Email",
-    value: "hello@tapcraftstudio.com",
-    href: "mailto:hello@tapcraftstudio.com",
+    value: "contact@tapcraft.com",
+    href: "mailto:contact@tapcraft.com",
   },
   {
     icon: <MapPin className="w-5 h-5" />,
     label: "Location",
-    value: "Melbourne, Australia",
+    value: "8 Uganda Street, Burwood 3125, Melbourne, Australia",
     href: null,
   },
   {
@@ -33,8 +33,8 @@ const contactInfo = [
   {
     icon: <Phone className="w-5 h-5" />,
     label: "Phone",
-    value: "+61 3 XXXX XXXX",
-    href: "tel:+613XXXXXXXX",
+    value: "+61 0 466 887 948",
+    href: "tel:+610466887948",
   },
 ];
 
@@ -58,6 +58,7 @@ export default function ContactPage() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const heroRef = useRef<HTMLDivElement>(null);
   const formSectionRef = useRef<HTMLDivElement>(null);
@@ -104,16 +105,30 @@ export default function ContactPage() {
     }
   }, [submitted]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formState.name.trim() || !formState.email.trim() || !formState.message.trim()) return;
 
     setLoading(true);
-    setTimeout(() => {
-      console.log("Contact form submitted:", formState);
+    setError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formState),
+      });
+
+      if (!res.ok) throw new Error("Request failed");
+
       setSubmitted(true);
+    } catch {
+      setError(
+        "Something went wrong. Please email us directly at hello@tapcraftstudio.com"
+      );
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   const handleChange = (
@@ -283,6 +298,12 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    {error && (
+                      <p className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3">
+                        {error}
+                      </p>
+                    )}
+
                     <button
                       type="submit"
                       disabled={loading}
@@ -321,8 +342,7 @@ export default function ContactPage() {
                     Message Sent!
                   </h2>
                   <p className="text-gray-400 text-lg max-w-md mx-auto mb-8">
-                    Thanks for reaching out. Our Melbourne team will review your
-                    message and get back to you within 24 hours.
+                    Thanks! We&apos;ll get back to you within 24 hours.
                   </p>
                   <Link
                     href="/"

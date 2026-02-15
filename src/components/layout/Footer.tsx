@@ -14,10 +14,13 @@ const quickLinks = [
 ] as const;
 
 const socialLinks = [
-  { label: "Instagram", href: "#" },
-  { label: "Facebook", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "X (Twitter)", href: "#" },
+	{ label: "Instagram", href: "https://www.instagram.com/tapcraft_studio/" },
+	// { label: "Facebook", href: "#" },
+	{
+		label: "LinkedIn",
+		href: "https://www.linkedin.com/company/tapcraft-studio/",
+	},
+	// { label: "X (Twitter)", href: "#" },
 ] as const;
 
 function FooterNewsletter() {

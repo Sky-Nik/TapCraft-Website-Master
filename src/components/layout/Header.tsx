@@ -75,7 +75,8 @@ export function Header() {
 
           {/* Right: Action Icons */}
           <div className="flex items-center gap-2">
-            <SearchModal />
+            {/* TODO: Re-enable search when ready */}
+            {/* <SearchModal /> */}
             <CartIcon variant="dark" />
             {/* TODO: Re-enable account features post-MVP */}
             {/* Mobile hamburger */}

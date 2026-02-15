@@ -155,9 +155,9 @@ export function ProductCard({ product }: ProductCardProps) {
           <span className="inline-flex items-center justify-center flex-1 h-8 px-3 text-sm rounded-md font-semibold text-tapcraft-blue bg-transparent hover:bg-tapcraft-blue/10 transition-colors duration-200">
             View Details
           </span>
-          <Button variant="primary" size="sm" className="flex-1" asChild>
+          {/* <Button variant="primary" size="sm" className="flex-1" asChild>
             <span>Customize</span>
-          </Button>
+          </Button> */}
         </div>
       </div>
     </Link>

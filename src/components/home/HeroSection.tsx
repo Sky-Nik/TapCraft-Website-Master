@@ -181,11 +181,11 @@ export function HeroSection() {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/customize"
+              href="/contact"
               className="inline-flex items-center justify-center gap-3 h-14 px-8 text-base font-semibold rounded-full border border-white/20 text-white hover:bg-white/10 transition-colors no-underline backdrop-blur-sm"
             >
               <Paintbrush className="w-4 h-4" />
-              Design Your Own
+              Get in Touch
             </Link>
           </div>
         </div>

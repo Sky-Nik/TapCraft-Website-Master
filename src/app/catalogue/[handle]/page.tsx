@@ -221,10 +221,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     />
                   )}
                   <Link
-                    href={`/customize?base=${product.slug}`}
+                    href="/contact"
                     className="inline-flex items-center justify-center flex-1 h-12 px-8 text-base font-semibold rounded-lg transition-colors duration-200 no-underline border-2 border-tapcraft-blue text-tapcraft-blue bg-transparent hover:bg-tapcraft-blue hover:text-white"
                   >
-                    Customize
+                    Request Custom Design
                   </Link>
                 </div>
 

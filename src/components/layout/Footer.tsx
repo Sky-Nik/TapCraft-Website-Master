@@ -8,7 +8,8 @@ import { Button } from "@/components/shared/Button";
 const quickLinks = [
   { href: "/", label: "Home" },
   { href: "/catalogue", label: "Catalogue" },
-  { href: "/customize", label: "Customize" },
+  // TODO: Re-enable customize page when ready
+  // { href: "/customize", label: "Customize" },
   { href: "/contact", label: "Contact" },
 ] as const;
 

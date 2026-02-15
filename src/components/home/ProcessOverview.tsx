@@ -167,7 +167,7 @@ export function ProcessOverview() {
               <span className="text-white font-semibold">extraordinary</span>?
             </p>
             <Link
-              href="/customize"
+              href="/contact"
               className="inline-flex items-center gap-2.5 h-11 px-7 rounded-full bg-tapcraft-blue text-white text-sm font-semibold hover:bg-blue-600 transition-colors no-underline shadow-lg shadow-tapcraft-blue/25"
             >
               Start Your Project

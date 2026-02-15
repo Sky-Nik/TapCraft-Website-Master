@@ -154,15 +154,15 @@ export default function ContactPage() {
             </Copy>
             <Copy animateOnScroll delay={0.1}>
               <h1 className="text-4xl md:text-5xl lg:text-6xl text-white font-normal tracking-tight leading-[1.1] mb-6">
-                Let&apos;s Build Something
+                Want Custom Designs?
                 <br />
-                Extraordinary Together
+                Get in Touch
               </h1>
             </Copy>
             <Copy animateOnScroll delay={0.2}>
               <p className="text-gray-400 text-lg leading-relaxed max-w-xl">
-                Whether you have a project in mind or just want to explore what&apos;s possible
-                with 3D + NFC technology, we&apos;d love to hear from you.
+                Have a unique idea or need a custom NFC product tailored to your brand?
+                We&apos;d love to bring your vision to life. Reach out and let&apos;s create something amazing together.
               </p>
             </Copy>
           </div>
@@ -384,17 +384,7 @@ export default function ContactPage() {
                       Browse our catalogue
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      href="/customize"
-                      className="text-gray-400 text-sm hover:text-tapcraft-blue transition-colors no-underline flex items-center gap-2"
-                    >
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                      </svg>
-                      Customize a product
-                    </Link>
-                  </li>
+                  {/* TODO: Re-enable customize link when ready */}
                 </ul>
               </div>
             </div>

@@ -1,11 +1,11 @@
 import { GraphQLClient } from 'graphql-request';
 import type {
   ShopifyCart,
+  ShopifyCartResponse,
   ShopifyCartCreateResponse,
   ShopifyCartLinesAddResponse,
   ShopifyCartLinesUpdateResponse,
   ShopifyCartLinesRemoveResponse,
-  ShopifyCartResponse,
 } from '@/lib/shopify/types';
 import {
   CART_CREATE,
@@ -19,143 +19,148 @@ const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const storefrontAccessToken =
   process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
-const hasShopifyConfig = Boolean(domain && storefrontAccessToken);
-
 const endpoint = domain
   ? `https://${domain}/api/2024-01/graphql.json`
   : '';
 
-const client = hasShopifyConfig
-  ? new GraphQLClient(endpoint, {
-      headers: {
-        'X-Shopify-Storefront-Access-Token': storefrontAccessToken!,
-        'Content-Type': 'application/json',
-      },
-    })
-  : null;
+function getClient(): GraphQLClient | null {
+  if (!domain || !storefrontAccessToken) return null;
+  return new GraphQLClient(endpoint, {
+    headers: {
+      'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
+      'Content-Type': 'application/json',
+    },
+  });
+}
 
-/**
- * Create a new Shopify cart, optionally with initial line items.
- */
 export async function createCart(
-  lines?: { merchandiseId: string; quantity: number }[]
+  variantId: string,
+  quantity: number = 1,
 ): Promise<ShopifyCart | null> {
-  if (!client) {
-    console.info('[TapCraft] Shopify not configured, cart API unavailable.');
-    return null;
-  }
+  const client = getClient();
+  if (!client) return null;
 
   try {
-    const response = await client.request<ShopifyCartCreateResponse>(
-      CART_CREATE,
-      { lines: lines || [] }
-    );
-    return response.cartCreate.cart;
+    const data = await client.request<ShopifyCartCreateResponse>(CART_CREATE, {
+      lines: [{ merchandiseId: variantId, quantity }],
+    });
+    return data.cartCreate.cart;
   } catch (error) {
     console.error('[TapCraft] Failed to create cart:', error);
     return null;
   }
 }
 
-/**
- * Add line items to an existing cart.
- */
 export async function addToCart(
   cartId: string,
   variantId: string,
-  quantity: number = 1
+  quantity: number = 1,
 ): Promise<ShopifyCart | null> {
-  if (!client) {
-    console.info('[TapCraft] Shopify not configured, cart API unavailable.');
-    return null;
-  }
+  const client = getClient();
+  if (!client) return null;
 
   try {
-    const response = await client.request<ShopifyCartLinesAddResponse>(
+    const data = await client.request<ShopifyCartLinesAddResponse>(
       CART_LINES_ADD,
       {
         cartId,
         lines: [{ merchandiseId: variantId, quantity }],
-      }
+      },
     );
-    return response.cartLinesAdd.cart;
+    return data.cartLinesAdd.cart;
   } catch (error) {
     console.error('[TapCraft] Failed to add to cart:', error);
     return null;
   }
 }
 
-/**
- * Update a line item's quantity in the cart.
- */
-export async function updateCartItem(
+export async function updateCartLine(
   cartId: string,
   lineId: string,
-  quantity: number
+  quantity: number,
 ): Promise<ShopifyCart | null> {
-  if (!client) {
-    console.info('[TapCraft] Shopify not configured, cart API unavailable.');
-    return null;
-  }
+  const client = getClient();
+  if (!client) return null;
 
   try {
-    const response = await client.request<ShopifyCartLinesUpdateResponse>(
+    const data = await client.request<ShopifyCartLinesUpdateResponse>(
       CART_LINES_UPDATE,
       {
         cartId,
         lines: [{ id: lineId, quantity }],
-      }
+      },
     );
-    return response.cartLinesUpdate.cart;
+    return data.cartLinesUpdate.cart;
   } catch (error) {
-    console.error('[TapCraft] Failed to update cart item:', error);
+    console.error('[TapCraft] Failed to update cart line:', error);
     return null;
   }
 }
 
-/**
- * Remove line items from the cart.
- */
-export async function removeFromCart(
+export async function removeCartLine(
   cartId: string,
-  lineId: string
+  lineId: string,
 ): Promise<ShopifyCart | null> {
-  if (!client) {
-    console.info('[TapCraft] Shopify not configured, cart API unavailable.');
-    return null;
-  }
+  const client = getClient();
+  if (!client) return null;
 
   try {
-    const response = await client.request<ShopifyCartLinesRemoveResponse>(
+    const data = await client.request<ShopifyCartLinesRemoveResponse>(
       CART_LINES_REMOVE,
       {
         cartId,
         lineIds: [lineId],
-      }
+      },
     );
-    return response.cartLinesRemove.cart;
+    return data.cartLinesRemove.cart;
   } catch (error) {
-    console.error('[TapCraft] Failed to remove from cart:', error);
+    console.error('[TapCraft] Failed to remove cart line:', error);
     return null;
   }
 }
 
-/**
- * Fetch an existing cart by ID.
- */
-export async function getCart(cartId: string): Promise<ShopifyCart | null> {
-  if (!client) {
-    console.info('[TapCraft] Shopify not configured, cart API unavailable.');
-    return null;
-  }
+export async function getCart(
+  cartId: string,
+): Promise<ShopifyCart | null> {
+  const client = getClient();
+  if (!client) return null;
 
   try {
-    const response = await client.request<ShopifyCartResponse>(GET_CART, {
+    const data = await client.request<ShopifyCartResponse>(GET_CART, {
       cartId,
     });
-    return response.cart;
+    return data.cart;
   } catch (error) {
     console.error('[TapCraft] Failed to fetch cart:', error);
     return null;
   }
+}
+
+export interface MappedCartLine {
+  lineId: string;
+  variantId: string;
+  title: string;
+  variantTitle: string;
+  handle: string;
+  quantity: number;
+  price: number;
+  totalPrice: number;
+  image: string | null;
+}
+
+export function mapCartLines(cart: ShopifyCart): MappedCartLine[] {
+  return cart.lines.edges.map((edge) => {
+    const line = edge.node;
+    return {
+      lineId: line.id,
+      variantId: line.merchandise.id,
+      title: line.merchandise.product.title,
+      variantTitle: line.merchandise.title,
+      handle: line.merchandise.product.handle,
+      quantity: line.quantity,
+      price: parseFloat(line.merchandise.price.amount),
+      totalPrice: parseFloat(line.cost.totalAmount.amount),
+      image: line.merchandise.image?.url ?? null,
+    };
+  });
 }

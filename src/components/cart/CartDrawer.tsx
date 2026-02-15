@@ -87,13 +87,6 @@ export function CartDrawer() {
           </button>
         </div>
 
-        {/* Loading indicator */}
-        {isLoading && (
-          <div className="absolute top-[65px] left-0 right-0 h-0.5 bg-gray-100 overflow-hidden z-10">
-            <div className="h-full w-1/3 bg-tapcraft-blue animate-[shimmer_1s_ease-in-out_infinite]" />
-          </div>
-        )}
-
         {/* Cart Content */}
         {items.length === 0 ? (
           /* Empty State */
@@ -154,12 +147,23 @@ export function CartDrawer() {
               {checkoutUrl ? (
                 <a
                   href={checkoutUrl}
-                  className="flex items-center justify-center w-full h-12 px-8 text-base font-semibold rounded-lg transition-colors duration-200 no-underline bg-tapcraft-blue text-white hover:bg-tapcraft-blue/90 shadow-sm"
+                  className="block w-full"
                 >
-                  Checkout
+                  <Button
+                    disabled={isLoading || items.length === 0}
+                    loading={isLoading}
+                    className="w-full"
+                    size="lg"
+                  >
+                    Checkout
+                  </Button>
                 </a>
               ) : (
-                <Button disabled className="w-full" size="lg">
+                <Button
+                  disabled
+                  className="w-full"
+                  size="lg"
+                >
                   Checkout
                 </Button>
               )}

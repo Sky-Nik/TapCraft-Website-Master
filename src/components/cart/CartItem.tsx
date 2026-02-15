@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import { useCartContext } from "@/context/CartContext";
-import type { CartItem as CartItemType } from "@/context/CartContext";
+import type { MappedCartLine } from "@/lib/shopify/cart";
 
 interface CartItemProps {
-  item: CartItemType;
+  item: MappedCartLine;
 }
 
 export function CartItem({ item }: CartItemProps) {
@@ -60,7 +60,7 @@ export function CartItem({ item }: CartItemProps) {
             <button
               onClick={() => updateQuantity(item.lineId, item.quantity - 1)}
               disabled={isLoading}
-              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-l-md text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-l-md text-gray-600 hover:bg-gray-50 transition-colors text-sm disabled:opacity-50"
               aria-label="Decrease quantity"
             >
               -
@@ -71,7 +71,7 @@ export function CartItem({ item }: CartItemProps) {
             <button
               onClick={() => updateQuantity(item.lineId, item.quantity + 1)}
               disabled={isLoading}
-              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-r-md text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-r-md text-gray-600 hover:bg-gray-50 transition-colors text-sm disabled:opacity-50"
               aria-label="Increase quantity"
             >
               +

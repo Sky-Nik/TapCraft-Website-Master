@@ -124,19 +124,22 @@ export interface ShopifyCollectionsResponse {
   };
 }
 
-// Cart types for Shopify Storefront API
+// Cart types
 export interface ShopifyCartLineItem {
   id: string;
   quantity: number;
   merchandise: {
     id: string;
     title: string;
-    price: ShopifyPrice;
     product: {
       title: string;
       handle: string;
-      featuredImage: ShopifyImage | null;
     };
+    price: ShopifyPrice;
+    image: ShopifyImage | null;
+  };
+  cost: {
+    totalAmount: ShopifyPrice;
   };
 }
 

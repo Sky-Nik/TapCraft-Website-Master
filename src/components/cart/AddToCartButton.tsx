@@ -17,27 +17,22 @@ export function AddToCartButton({
   disabled = false,
   className,
 }: AddToCartButtonProps) {
-  const { addItem, openCart } = useCartContext();
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const { addItem, isLoading, openCart } = useCartContext();
+  const [status, setStatus] = useState<"idle" | "adding" | "success">("idle");
 
   const handleAddToCart = useCallback(async () => {
-    if (status === "loading") return;
-    setStatus("loading");
-    try {
-      await addItem(variantId, quantity);
-      setStatus("success");
-      openCart();
-      setTimeout(() => setStatus("idle"), 2000);
-    } catch {
-      setStatus("idle");
-    }
-  }, [variantId, quantity, addItem, openCart, status]);
+    setStatus("adding");
+    await addItem(variantId, quantity);
+    setStatus("success");
+    openCart();
+    setTimeout(() => setStatus("idle"), 2000);
+  }, [variantId, quantity, addItem, openCart]);
 
   return (
     <Button
       onClick={handleAddToCart}
-      disabled={disabled || status === "loading"}
-      loading={status === "loading"}
+      disabled={disabled || isLoading || status === "adding"}
+      loading={status === "adding"}
       variant="primary"
       size="lg"
       className={className}

@@ -14,21 +14,35 @@ export function EmailCapture() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email.trim()) return;
-
+    if (!email.trim() || loading) return;
+    setError(null);
     setLoading(true);
 
-    setTimeout(() => {
-      console.log("Newsletter signup:", email);
-      setSubmitted(true);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.message || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   };
 
   useGSAP(
@@ -125,6 +139,9 @@ export function EmailCapture() {
               </Button>
             </form>
 
+            {error && (
+              <p className="mt-3 text-red-400 text-sm" role="alert">{error}</p>
+            )}
             <p className="mt-5 text-gray-500 text-xs">
               No spam, ever. Unsubscribe anytime. We respect your privacy.
             </p>
@@ -146,8 +163,8 @@ export function EmailCapture() {
               You&apos;re In!
             </h2>
             <p className="text-gray-300 text-lg max-w-md mx-auto">
-              Thanks for subscribing. Keep an eye on your inbox for design
-              inspiration and the latest from TapCraft Studio.
+              Thanks! Check your email to confirm. Keep an eye on your inbox for
+              design inspiration and the latest from TapCraft Studio.
             </p>
           </div>
         )}

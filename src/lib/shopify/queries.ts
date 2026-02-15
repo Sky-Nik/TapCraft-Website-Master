@@ -294,3 +294,21 @@ export const GET_CART = gql`
     }
   }
 `;
+
+// ── Customer Mutations ──
+
+export const CUSTOMER_CREATE = gql`
+  mutation CustomerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+        email
+        acceptsMarketing
+      }
+      customerUserErrors {
+        field
+        message
+      }
+    }
+  }
+`;

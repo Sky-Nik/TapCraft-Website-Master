@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/shared/Button";
@@ -19,6 +19,79 @@ const socialLinks = [
   { label: "LinkedIn", href: "#" },
   { label: "X (Twitter)", href: "#" },
 ] as const;
+
+function FooterNewsletter() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || status === "loading") return;
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setStatus("success");
+      } else {
+        setErrorMsg(data.message || "Something went wrong. Please try again.");
+        setStatus("error");
+      }
+    } catch {
+      setErrorMsg("Something went wrong. Please try again.");
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h4 className="text-sm font-semibold uppercase tracking-wider text-tapcraft-white">
+        Newsletter
+      </h4>
+      <p className="text-sm text-gray-400">
+        Stay updated with our latest products and offers.
+      </p>
+      {status === "success" ? (
+        <p className="text-sm text-emerald-400">
+          Thanks! Check your email to confirm.
+        </p>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email address"
+              className="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-tapcraft-white placeholder:text-gray-500 focus:border-tapcraft-blue focus:outline-none focus:ring-1 focus:ring-tapcraft-blue transition-colors"
+              required
+            />
+            <Button
+              type="submit"
+              size="sm"
+              className="w-full"
+              style={{ color: "white" }}
+              loading={status === "loading"}
+            >
+              Subscribe
+            </Button>
+          </form>
+          {status === "error" && (
+            <p className="text-xs text-red-400" role="alert">{errorMsg}</p>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
 export function Footer() {
   return (
@@ -91,29 +164,8 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-tapcraft-white">
-              Newsletter
-            </h4>
-            <p className="text-sm text-gray-400">
-              Stay updated with our latest products and offers.
-            </p>
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex flex-col gap-3"
-            >
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-tapcraft-white placeholder:text-gray-500 focus:border-tapcraft-blue focus:outline-none focus:ring-1 focus:ring-tapcraft-blue transition-colors"
-                required
-              />
-              <Button type="submit" size="sm" className="w-full" style={{ color: 'white' }}>
-                Subscribe
-              </Button>
-            </form>
-          </div>
+          {/* TODO: Re-enable newsletter when ready */}
+          {/* <FooterNewsletter /> */}
         </div>
 
         {/* Copyright */}

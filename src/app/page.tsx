@@ -7,7 +7,8 @@ import { ProcessOverview } from "@/components/home/ProcessOverview";
 import { SocialProof } from "@/components/home/SocialProof";
 
 import { FAQ } from "@/components/home/FAQ";
-import { EmailCapture } from "@/components/home/EmailCapture";
+// TODO: Re-enable newsletter when ready
+// import { EmailCapture } from "@/components/home/EmailCapture";
 
 export const metadata: Metadata = {
   title: "TapCraft Studio | Custom 3D NFC Printing in Melbourne",
@@ -50,7 +51,8 @@ export default function HomePage() {
         <SocialProof />
 
         <FAQ />
-        <EmailCapture />
+        {/* TODO: Re-enable newsletter when ready */}
+        {/* <EmailCapture /> */}
       </main>
     </>
   );

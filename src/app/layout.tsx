@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import { Footer } from "@/components/layout/Footer";
+import { CartProvider } from "@/context/CartContext";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -38,8 +40,11 @@ export default function RootLayout({
     <ViewTransitions>
       <html lang="en">
         <body className="font-sans antialiased bg-white text-black min-h-screen flex flex-col">
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <CartProvider>
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartDrawer />
+          </CartProvider>
         </body>
       </html>
     </ViewTransitions>

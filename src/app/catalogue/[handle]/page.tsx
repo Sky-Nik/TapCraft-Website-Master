@@ -5,13 +5,13 @@ import { getProductByHandle, getAllProducts } from '@/lib/shopify/client';
 import { transformShopifyProduct, transformShopifyProducts } from '@/lib/shopify/transformer';
 import { PRODUCTS, getProductBySlug, getProductsByCategory } from '@/lib/constants/products';
 import type { Product } from '@/types/product';
-import { formatPrice, formatPriceRange } from '@/lib/utils/formatting';
+import { formatPriceRange } from '@/lib/utils/formatting';
 import { LightHeader } from '@/components/layout/LightHeader';
-import { Button } from '@/components/shared/Button';
 import { Badge } from '@/components/shared/Badge';
 import { ImageGallery } from '@/components/product/ImageGallery';
 import { SpecificationsTable } from '@/components/product/SpecificationsTable';
 import { RelatedProducts } from '@/components/product/RelatedProducts';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 
 interface PageProps {
   params: Promise<{ handle: string }>;
@@ -152,7 +152,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Left: Image Gallery */}
-              <ImageGallery images={product.images} productName={product.name} />
+              <ImageGallery images={product.images} media={product.media} productName={product.name} />
 
               {/* Right: Product Info */}
               <div className="flex flex-col">
@@ -196,7 +196,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 </div>
 
                 {/* Quantity Discount Info */}
-                <div className="mt-5 rounded-xl bg-tapcraft-light/60 border border-tapcraft-blue/10 p-4">
+                {/* <div className="mt-5 rounded-xl bg-tapcraft-light/60 border border-tapcraft-blue/10 p-4">
                   <div className="flex items-start gap-2.5">
                     <svg className="mt-0.5 h-5 w-5 shrink-0 text-tapcraft-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
@@ -209,16 +209,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       </p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* CTA Buttons */}
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <Button variant="primary" size="lg" className="flex-1" asChild>
-                    <Link href="/contact">Request Quote</Link>
-                  </Button>
-                  <Button variant="secondary" size="lg" className="flex-1" asChild>
-                    <Link href={`/customize?base=${product.slug}`}>Customize</Link>
-                  </Button>
+                  {product.variants.length > 0 && (
+                    <AddToCartButton
+                      variantId={product.variants[0].id}
+                      disabled={!product.inStock}
+                      className="flex-1"
+                    />
+                  )}
+                  <Link
+                    href={`/customize?base=${product.slug}`}
+                    className="inline-flex items-center justify-center flex-1 h-12 px-8 text-base font-semibold rounded-lg transition-colors duration-200 no-underline border-2 border-tapcraft-blue text-tapcraft-blue bg-transparent hover:bg-tapcraft-blue hover:text-white"
+                  >
+                    Customize
+                  </Link>
                 </div>
 
                 {/* Stock status */}
@@ -242,11 +249,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <h2 className="text-2xl sm:text-3xl font-normal text-gray-900 tracking-tight mb-6">
               Product Details
             </h2>
-            <div className="prose prose-gray max-w-none">
-              <p className="text-base sm:text-lg text-gray-600 leading-relaxed whitespace-pre-line">
-                {product.description}
-              </p>
-            </div>
+            {product.descriptionHtml ? (
+              <div
+                className="prose prose-gray prose-lg max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-tapcraft-blue prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-ul:text-gray-600 prose-ol:text-gray-600 prose-li:marker:text-tapcraft-blue"
+                dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+              />
+            ) : (
+              <div className="prose prose-gray prose-lg max-w-none">
+                <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                  {product.description}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Related Products */}

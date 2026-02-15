@@ -1,4 +1,4 @@
-import type { Product } from '@/types/product';
+import type { Product, ProductMedia } from '@/types/product';
 import type { ShopifyProduct } from '@/lib/shopify/types';
 
 /**
@@ -118,6 +118,60 @@ export function transformShopifyProduct(shopifyProduct: ShopifyProduct): Product
     height: edge.node.height,
   }));
 
+  // Transform media (images, videos, external videos)
+  const media: ProductMedia[] = [];
+  if (shopifyProduct.media?.edges) {
+    for (const edge of shopifyProduct.media.edges) {
+      const node = edge.node;
+      switch (node.mediaContentType) {
+        case 'IMAGE':
+          if (node.image) {
+            media.push({
+              type: 'image',
+              src: node.image.url,
+              alt: node.image.altText || node.alt || shopifyProduct.title,
+              width: node.image.width,
+              height: node.image.height,
+            });
+          }
+          break;
+        case 'VIDEO':
+          if (node.sources && node.sources.length > 0) {
+            // Pick the highest quality source
+            const source = node.sources.reduce((best, s) =>
+              s.width > best.width ? s : best,
+            );
+            media.push({
+              type: 'video',
+              src: source.url,
+              mimeType: source.mimeType,
+              alt: node.alt || shopifyProduct.title,
+              width: source.width,
+              height: source.height,
+            });
+          }
+          break;
+        case 'EXTERNAL_VIDEO':
+          if (node.embedUrl && node.host) {
+            media.push({
+              type: 'external_video',
+              embedUrl: node.embedUrl,
+              host: node.host.toLowerCase() as 'youtube' | 'vimeo',
+              alt: node.alt || shopifyProduct.title,
+            });
+          }
+          break;
+      }
+    }
+  }
+
+  // If no media from Shopify media field, build from images
+  if (media.length === 0) {
+    for (const img of images) {
+      media.push({ type: 'image', ...img });
+    }
+  }
+
   // Use productType as category, or default to the slug
   const category = shopifyProduct.productType || shopifyProduct.handle;
 
@@ -126,17 +180,34 @@ export function transformShopifyProduct(shopifyProduct: ShopifyProduct): Product
     (tag) => tag.toLowerCase() === 'featured',
   );
 
+  // Transform variants
+  const variants = shopifyProduct.variants.edges.map((edge) => ({
+    id: edge.node.id,
+    title: edge.node.title,
+    availableForSale: edge.node.availableForSale,
+    price: parseFloat(edge.node.price.amount),
+    compareAtPrice: edge.node.compareAtPrice
+      ? parseFloat(edge.node.compareAtPrice.amount)
+      : null,
+    options: edge.node.selectedOptions.map((opt) => ({
+      name: opt.name,
+      value: opt.value,
+    })),
+  }));
+
   return {
     id: shopifyProduct.id,
     name: shopifyProduct.title,
     slug: shopifyProduct.handle,
     description: shopifyProduct.description || '',
+    descriptionHtml: shopifyProduct.descriptionHtml || '',
     shortDescription: generateShortDescription(shopifyProduct.description || ''),
     price: {
       min: minPrice,
       max: maxPrice,
       currency: 'AUD',
     },
+    variants,
     specifications: {
       material,
       nfcChip,
@@ -144,6 +215,7 @@ export function transformShopifyProduct(shopifyProduct: ShopifyProduct): Product
       productionTime,
     },
     images,
+    media,
     category,
     tags: shopifyProduct.tags,
     featured,

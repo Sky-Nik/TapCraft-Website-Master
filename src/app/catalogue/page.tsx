@@ -1,105 +1,106 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { Product } from '@/types/product';
-import { MOCK_PRODUCTS, MOCK_CATEGORIES } from '@/lib/constants/products';
+import { MOCK_PRODUCTS } from '@/lib/constants/products';
 import { getAllProducts } from '@/lib/shopify/client';
 import { transformShopifyProducts } from '@/lib/shopify/transformer';
 import { LightHeader } from '@/components/layout/LightHeader';
-import { CategoryNav } from '@/components/catalogue/CategoryNav';
-import {
-  FilterSidebar,
-  EMPTY_FILTERS,
-  type FilterState,
-} from '@/components/catalogue/FilterSidebar';
-import { ProductGrid, type SortOption } from '@/components/catalogue/ProductGrid';
-import { Button } from '@/components/shared/Button';
+// import { CategoryNav } from '@/components/catalogue/CategoryNav';
+// import {
+//   FilterSidebar,
+//   EMPTY_FILTERS,
+//   type FilterState,
+// } from '@/components/catalogue/FilterSidebar';
+// import { ProductGrid, type SortOption } from '@/components/catalogue/ProductGrid';
+// import { Button } from '@/components/shared/Button';
+import { ProductCard } from '@/components/catalogue/ProductCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
-// Map category slugs to the category IDs used in product data
-const CATEGORY_SLUG_TO_ID: Record<string, string> = {};
-for (const cat of MOCK_CATEGORIES) {
-  CATEGORY_SLUG_TO_ID[cat.slug] = cat.id;
-}
+// // Map category slugs to the category IDs used in product data
+// const CATEGORY_SLUG_TO_ID: Record<string, string> = {};
+// for (const cat of MOCK_CATEGORIES) {
+//   CATEGORY_SLUG_TO_ID[cat.slug] = cat.id;
+// }
 
-// Map industry filter labels to tag keywords for matching
-const INDUSTRY_TAG_MAP: Record<string, string[]> = {
-  'Real Estate': ['real estate', 'agent'],
-  Hospitality: ['hospitality'],
-  Retail: ['retail', 'product tag', 'in-store'],
-  Events: ['event', 'check-in'],
-  Corporate: ['corporate', 'enterprise', 'prototype'],
-  Education: ['education'],
-};
+// // Map industry filter labels to tag keywords for matching
+// const INDUSTRY_TAG_MAP: Record<string, string[]> = {
+//   'Real Estate': ['real estate', 'agent'],
+//   Hospitality: ['hospitality'],
+//   Retail: ['retail', 'product tag', 'in-store'],
+//   Events: ['event', 'check-in'],
+//   Corporate: ['corporate', 'enterprise', 'prototype'],
+//   Education: ['education'],
+// };
 
-function matchesPriceRange(
-  price: { min: number; max: number },
-  range: string,
-): boolean {
-  switch (range) {
-    case '0-100':
-      return price.min < 100;
-    case '100-250':
-      return price.min >= 100 && price.min <= 250;
-    case '250-500':
-      return price.min >= 250 && price.min <= 500;
-    case '500-up':
-      return price.max >= 500;
-    default:
-      return true;
-  }
-}
+// function matchesPriceRange(
+//   price: { min: number; max: number },
+//   range: string,
+// ): boolean {
+//   switch (range) {
+//     case '0-100':
+//       return price.min < 100;
+//     case '100-250':
+//       return price.min >= 100 && price.min <= 250;
+//     case '250-500':
+//       return price.min >= 250 && price.min <= 500;
+//     case '500-up':
+//       return price.max >= 500;
+//     default:
+//       return true;
+//   }
+// }
 
-function matchesProductionTime(
-  prodTime: { min: number; max: number },
-  filter: string,
-): boolean {
-  switch (filter) {
-    case '1-3':
-      return prodTime.min <= 3;
-    case '3-5':
-      return prodTime.min >= 3 && prodTime.max <= 5;
-    case '5-7':
-      return prodTime.min >= 5 && prodTime.max <= 7;
-    case 'custom':
-      return prodTime.max > 7;
-    default:
-      return true;
-  }
-}
+// function matchesProductionTime(
+//   prodTime: { min: number; max: number },
+//   filter: string,
+// ): boolean {
+//   switch (filter) {
+//     case '1-3':
+//       return prodTime.min <= 3;
+//     case '3-5':
+//       return prodTime.min >= 3 && prodTime.max <= 5;
+//     case '5-7':
+//       return prodTime.min >= 5 && prodTime.max <= 7;
+//     case 'custom':
+//       return prodTime.max > 7;
+//     default:
+//       return true;
+//   }
+// }
 
-function sortProducts(products: Product[], sortBy: SortOption): Product[] {
-  const sorted = [...products];
-  switch (sortBy) {
-    case 'featured':
-      return sorted.sort((a, b) =>
-        a.featured === b.featured ? 0 : a.featured ? -1 : 1,
-      );
-    case 'price-low-high':
-      return sorted.sort((a, b) => a.price.min - b.price.min);
-    case 'price-high-low':
-      return sorted.sort((a, b) => b.price.min - a.price.min);
-    case 'newest':
-      return sorted.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-    case 'most-popular':
-      return sorted.sort((a, b) =>
-        a.featured === b.featured ? 0 : a.featured ? -1 : 1,
-      );
-    default:
-      return sorted;
-  }
-}
+// function sortProducts(products: Product[], sortBy: SortOption): Product[] {
+//   const sorted = [...products];
+//   switch (sortBy) {
+//     case 'featured':
+//       return sorted.sort((a, b) =>
+//         a.featured === b.featured ? 0 : a.featured ? -1 : 1,
+//       );
+//     case 'price-low-high':
+//       return sorted.sort((a, b) => a.price.min - b.price.min);
+//     case 'price-high-low':
+//       return sorted.sort((a, b) => b.price.min - a.price.min);
+//     case 'newest':
+//       return sorted.sort(
+//         (a, b) =>
+//           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+//       );
+//     case 'most-popular':
+//       return sorted.sort((a, b) =>
+//         a.featured === b.featured ? 0 : a.featured ? -1 : 1,
+//       );
+//     default:
+//       return sorted;
+//   }
+// }
 
 export default function CataloguePage() {
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
-  const [sortBy, setSortBy] = useState<SortOption>('featured');
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  // const [activeCategory, setActiveCategory] = useState('all');
+  // const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
+  // const [sortBy, setSortBy] = useState<SortOption>('featured');
+  // const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Fetch products from Shopify on mount
   useEffect(() => {
@@ -129,71 +130,71 @@ export default function CataloguePage() {
     fetchProducts();
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    let results = [...products];
+  // const filteredProducts = useMemo(() => {
+  //   let results = [...products];
+  //
+  //   // Filter by category
+  //   if (activeCategory !== 'all') {
+  //     const categoryId = CATEGORY_SLUG_TO_ID[activeCategory];
+  //     if (categoryId) {
+  //       results = results.filter((p) => p.category === categoryId);
+  //     }
+  //   }
+  //
+  //   // Filter by industry (match against product tags)
+  //   if (filters.industries.length > 0) {
+  //     results = results.filter((product) => {
+  //       const productTagsLower = product.tags.map((t) => t.toLowerCase());
+  //       return filters.industries.some((industry) => {
+  //         const keywords = INDUSTRY_TAG_MAP[industry] || [];
+  //         return keywords.some((keyword) =>
+  //           productTagsLower.some((tag) => tag.includes(keyword)),
+  //         );
+  //       });
+  //     });
+  //   }
+  //
+  //   // Filter by price range
+  //   if (filters.priceRange) {
+  //     results = results.filter((p) =>
+  //       matchesPriceRange(p.price, filters.priceRange!),
+  //     );
+  //   }
+  //
+  //   // Filter by production time
+  //   if (filters.productionTime) {
+  //     results = results.filter((p) =>
+  //       matchesProductionTime(
+  //         p.specifications.productionTime,
+  //         filters.productionTime!,
+  //       ),
+  //     );
+  //   }
+  //
+  //   // Filter by material
+  //   if (filters.materials.length > 0) {
+  //     results = results.filter((p) =>
+  //       filters.materials.includes(p.specifications.material),
+  //     );
+  //   }
+  //
+  //   // Filter by NFC chip type
+  //   if (filters.nfcChipTypes.length > 0) {
+  //     results = results.filter((p) =>
+  //       filters.nfcChipTypes.includes(p.specifications.nfcChip),
+  //     );
+  //   }
+  //
+  //   // Sort
+  //   return sortProducts(results, sortBy);
+  // }, [products, activeCategory, filters, sortBy]);
 
-    // Filter by category
-    if (activeCategory !== 'all') {
-      const categoryId = CATEGORY_SLUG_TO_ID[activeCategory];
-      if (categoryId) {
-        results = results.filter((p) => p.category === categoryId);
-      }
-    }
-
-    // Filter by industry (match against product tags)
-    if (filters.industries.length > 0) {
-      results = results.filter((product) => {
-        const productTagsLower = product.tags.map((t) => t.toLowerCase());
-        return filters.industries.some((industry) => {
-          const keywords = INDUSTRY_TAG_MAP[industry] || [];
-          return keywords.some((keyword) =>
-            productTagsLower.some((tag) => tag.includes(keyword)),
-          );
-        });
-      });
-    }
-
-    // Filter by price range
-    if (filters.priceRange) {
-      results = results.filter((p) =>
-        matchesPriceRange(p.price, filters.priceRange!),
-      );
-    }
-
-    // Filter by production time
-    if (filters.productionTime) {
-      results = results.filter((p) =>
-        matchesProductionTime(
-          p.specifications.productionTime,
-          filters.productionTime!,
-        ),
-      );
-    }
-
-    // Filter by material
-    if (filters.materials.length > 0) {
-      results = results.filter((p) =>
-        filters.materials.includes(p.specifications.material),
-      );
-    }
-
-    // Filter by NFC chip type
-    if (filters.nfcChipTypes.length > 0) {
-      results = results.filter((p) =>
-        filters.nfcChipTypes.includes(p.specifications.nfcChip),
-      );
-    }
-
-    // Sort
-    return sortProducts(results, sortBy);
-  }, [products, activeCategory, filters, sortBy]);
-
-  const activeFilterCount =
-    filters.industries.length +
-    filters.materials.length +
-    filters.nfcChipTypes.length +
-    (filters.priceRange ? 1 : 0) +
-    (filters.productionTime ? 1 : 0);
+  // const activeFilterCount =
+  //   filters.industries.length +
+  //   filters.materials.length +
+  //   filters.nfcChipTypes.length +
+  //   (filters.priceRange ? 1 : 0) +
+  //   (filters.productionTime ? 1 : 0);
 
   return (
     <>
@@ -216,38 +217,28 @@ export default function CataloguePage() {
           </div>
         </div>
 
-        {/* Category navigation */}
-        <div className="bg-white border-b border-gray-100 sticky top-20 z-30">
+        {/* Category navigation — blocked for now */}
+        {/* <div className="bg-white border-b border-gray-100 sticky top-20 z-30">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
             <CategoryNav
               activeCategory={activeCategory}
               onCategoryChange={setActiveCategory}
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Main content */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          {/* Mobile filter button */}
-          <div className="mb-6 lg:hidden">
+          {/* Mobile filter button — blocked for now */}
+          {/* <div className="mb-6 lg:hidden">
             <Button
               variant="secondary"
               size="md"
               onClick={() => setMobileFiltersOpen(true)}
               className="w-full sm:w-auto"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-                />
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
               </svg>
               Filters
               {activeFilterCount > 0 && (
@@ -256,29 +247,20 @@ export default function CataloguePage() {
                 </span>
               )}
             </Button>
-          </div>
+          </div> */}
 
-          {/* Layout: sidebar + grid */}
-          <div className="flex gap-8">
-            <FilterSidebar
-              isOpen={mobileFiltersOpen}
-              onClose={() => setMobileFiltersOpen(false)}
-              filters={filters}
-              onFiltersChange={setFilters}
-            />
-
-            {isLoading ? (
-              <div className="flex-1 flex items-center justify-center py-20">
-                <LoadingSpinner size="lg" label="Loading products..." />
-              </div>
-            ) : (
-              <ProductGrid
-                products={filteredProducts}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
-              />
-            )}
-          </div>
+          {/* Product grid — no sidebar, no sort, just products */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <LoadingSpinner size="lg" label="Loading products..." />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </>

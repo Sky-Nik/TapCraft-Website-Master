@@ -5,12 +5,13 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTransitionRouter } from "next-view-transitions";
 import { cn } from "@/lib/utils/formatting";
-import { Search, ShoppingCart, User, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { SearchModal } from "@/components/layout/SearchModal";
-import { CartDrawer } from "@/components/layout/CartDrawer";
-import { ProfileMenu } from "@/components/layout/ProfileMenu";
+import { CartIcon } from "@/components/cart/CartIcon";
 import { slideInOut } from "@/lib/utils/transitions";
+// TODO: Re-enable account features post-MVP
+// import { ProfileMenu } from "@/components/layout/ProfileMenu";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -74,8 +75,8 @@ export function LightHeader() {
           {/* Right: Action Icons */}
           <div className="flex items-center gap-2">
             <SearchModal variant="light" />
-            <CartDrawer variant="light" />
-            <ProfileMenu variant="light" />
+            <CartIcon variant="light" />
+            {/* TODO: Re-enable account features post-MVP */}
             {/* Mobile hamburger */}
             <button
               type="button"

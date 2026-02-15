@@ -5,7 +5,8 @@
       "Bash(npm uninstall:*)",
       "Bash(npx next build)",
       "Bash(grep:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "WebFetch(domain:developers.brevo.com)"
     ]
   }
 }

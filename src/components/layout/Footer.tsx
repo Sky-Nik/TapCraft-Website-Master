@@ -146,10 +146,10 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="mailto:hello@tapcraftstudio.com"
+                  href="mailto:contact@tapcraft.shop"
                   className="text-sm text-gray-400 transition-colors hover:text-tapcraft-white"
                 >
-                  hello@tapcraftstudio.com
+                  contact@tapcraft.shop
                 </a>
               </li>
               {socialLinks.map((link) => (

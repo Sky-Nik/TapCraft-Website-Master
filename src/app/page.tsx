@@ -7,8 +7,7 @@ import { SocialProof } from "@/components/home/SocialProof";
 import { FAQ } from "@/components/home/FAQ";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { siteMetadata, homepageSchema } from "@/lib/seo/metadata";
-// TODO: Re-enable newsletter when ready
-// import { EmailCapture } from "@/components/home/EmailCapture";
+import { EmailCapture } from "@/components/home/EmailCapture";
 
 export const metadata: Metadata = {
   title: "TapCraft Studio | Custom 3D Printed NFC Products | Melbourne",
@@ -84,11 +83,10 @@ export default function HomePage() {
         <ValueProposition />
         <ProcessOverview />
 
-        <SocialProof />
+        {/* <SocialProof /> */}
 
         <FAQ />
-        {/* TODO: Re-enable newsletter when ready */}
-        {/* <EmailCapture /> */}
+        <EmailCapture />
       </main>
     </>
   );

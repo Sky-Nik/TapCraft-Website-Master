@@ -5,13 +5,12 @@ import { getProductByHandle, getAllProducts } from '@/lib/shopify/client';
 import { transformShopifyProduct, transformShopifyProducts } from '@/lib/shopify/transformer';
 import { PRODUCTS, getProductBySlug, getProductsByCategory } from '@/lib/constants/products';
 import type { Product } from '@/types/product';
-import { formatPriceRange } from '@/lib/utils/formatting';
 import { LightHeader } from '@/components/layout/LightHeader';
 import { Badge } from '@/components/shared/Badge';
 import { ImageGallery } from '@/components/product/ImageGallery';
 import { SpecificationsTable } from '@/components/product/SpecificationsTable';
 import { RelatedProducts } from '@/components/product/RelatedProducts';
-import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { ProductPurchaseSection } from '@/components/product/ProductPurchaseSection';
 
 interface PageProps {
   params: Promise<{ handle: string }>;
@@ -175,16 +174,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   ))}
                 </div>
 
-                {/* Price */}
-                <div className="mt-5">
-                  <p className="text-2xl font-semibold text-tapcraft-blue">
-                    {formatPriceRange(product.price.min, product.price.max, product.price.currency)}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Price per unit. Quantity discounts available.
-                  </p>
-                </div>
-
                 {/* Short Description */}
                 <p className="mt-5 text-base text-gray-600 leading-relaxed">
                   {product.shortDescription}
@@ -195,46 +184,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   <SpecificationsTable specifications={product.specifications} />
                 </div>
 
-                {/* Quantity Discount Info */}
-                {/* <div className="mt-5 rounded-xl bg-tapcraft-light/60 border border-tapcraft-blue/10 p-4">
-                  <div className="flex items-start gap-2.5">
-                    <svg className="mt-0.5 h-5 w-5 shrink-0 text-tapcraft-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
-                    </svg>
-                    <div>
-                      <p className="text-sm font-semibold text-tapcraft-blue">Quantity Discounts</p>
-                      <p className="mt-0.5 text-sm text-gray-600">
-                        25+ units: 10% off &middot; 50+ units: 15% off &middot; 100+ units: 25% off
-                      </p>
-                    </div>
-                  </div>
-                </div> */}
-
-                {/* CTA Buttons */}
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  {product.variants.length > 0 && (
-                    <AddToCartButton
-                      variantId={product.variants[0].id}
-                      disabled={!product.inStock}
-                      className="flex-1"
-                    />
-                  )}
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center flex-1 h-12 px-8 text-base font-semibold rounded-lg transition-colors duration-200 no-underline border-2 border-tapcraft-blue text-tapcraft-blue bg-transparent hover:bg-tapcraft-blue hover:text-white"
-                  >
-                    Request Custom Design
-                  </Link>
-                </div>
-
-                {/* Stock status */}
-                <div className="mt-4 flex items-center gap-2">
-                  <span className={`h-2 w-2 rounded-full ${product.inStock ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                  <span className="text-sm text-gray-600">
-                    {product.inStock ? 'In Stock — Made to order' : 'Currently unavailable'}
-                  </span>
-                </div>
+                {/* Variant Selector, Price, CTA, Stock */}
+                <ProductPurchaseSection
+                  variants={product.variants}
+                  inStock={product.inStock}
+                />
               </div>
             </div>
           </div>

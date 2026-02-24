@@ -53,6 +53,22 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html lang="en">
+        <head>
+          <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-LKENKZZ9NG"
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-LKENKZZ9NG');
+              `,
+            }}
+          />
+        </head>
         <body className="font-sans antialiased bg-white text-black min-h-screen flex flex-col">
           <CartProvider>
             <main className="flex-1">{children}</main>

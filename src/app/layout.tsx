@@ -68,6 +68,7 @@ export default function RootLayout({
               `,
             }}
           />
+          <link rel="icon" href="/logo.png" type="image/png" />
         </head>
         <body className="font-sans antialiased bg-white text-black min-h-screen flex flex-col">
           <CartProvider>

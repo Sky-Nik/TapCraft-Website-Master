@@ -57,6 +57,27 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html lang="en">
+        <head>
+          <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-LKENKZZ9NG"
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-LKENKZZ9NG');
+              `,
+            }}
+          />
+          <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+          <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+        </head>
         <body className="font-sans antialiased bg-white text-black min-h-screen flex flex-col">
           {/* UpPromote affiliate tracking – data-layer + config (must run before collect.js) */}
           <Script

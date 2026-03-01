@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { ViewTransitions } from "next-view-transitions";
+
+const UPPROMOTE_SHOP =
+  process.env.NEXT_PUBLIC_UPPROMOTE_SHOP ?? "ejkqpi-th.myshopify.com";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -54,6 +58,26 @@ export default function RootLayout({
     <ViewTransitions>
       <html lang="en">
         <body className="font-sans antialiased bg-white text-black min-h-screen flex flex-col">
+          {/* UpPromote affiliate tracking – data-layer + config (must run before collect.js) */}
+          <Script
+            id="uppromote-config"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: [
+                `window.upDataLayer = window.upDataLayer || [];`,
+                `function upTag() { return upDataLayer.push(arguments); }`,
+                `upTag('config', 'myshopify_domain', '${UPPROMOTE_SHOP}');`,
+                `upTag('config', 'linker', ['${UPPROMOTE_SHOP}']);`,
+              ].join("\n"),
+            }}
+          />
+          {/* UpPromote pixel (single copy – handles both cart & linker tracking) */}
+          <Script
+            id="uppromote-collect"
+            strategy="afterInteractive"
+            src="https://static-pixel.uppromote.com/collect/v1/collect.js"
+          />
+
           <CartProvider>
             <main className="flex-1">{children}</main>
             <Footer />

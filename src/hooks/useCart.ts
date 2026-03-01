@@ -18,6 +18,22 @@ export interface Cart {
 
 const CART_STORAGE_KEY = "tapcraft_cart";
 
+/**
+ * Fire an UpPromote `cart_updated` event so affiliate conversions are
+ * attributed correctly.  Once the Shopify Storefront Cart API is
+ * integrated, pass the real `cart.id` (GID with ?key=) and
+ * `cart.checkoutUrl` instead of the placeholder values below.
+ */
+function fireUpPromoteCartEvent(cart: Cart) {
+  if (typeof window !== "undefined" && typeof upTag !== "undefined") {
+    upTag("event", "cart_updated", {
+      // TODO: replace with Shopify cart GID + checkoutUrl once Storefront API cart is wired
+      id: `local:${Date.now()}`,
+      checkoutUrl: "",
+    });
+  }
+}
+
 export function useCart() {
   const [cart, setCart] = useState<Cart>({
     items: [],
@@ -70,6 +86,7 @@ export function useCart() {
 
         const updatedCart = { items: updatedItems, totalItems, totalPrice };
         saveCart(updatedCart);
+        fireUpPromoteCartEvent(updatedCart);
         return updatedCart;
       });
     },
@@ -88,6 +105,7 @@ export function useCart() {
 
         const updatedCart = { items: updatedItems, totalItems, totalPrice };
         saveCart(updatedCart);
+        fireUpPromoteCartEvent(updatedCart);
         return updatedCart;
       });
     },
@@ -113,6 +131,7 @@ export function useCart() {
 
         const updatedCart = { items: updatedItems, totalItems, totalPrice };
         saveCart(updatedCart);
+        fireUpPromoteCartEvent(updatedCart);
         return updatedCart;
       });
     },

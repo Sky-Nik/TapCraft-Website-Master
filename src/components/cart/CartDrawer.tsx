@@ -17,6 +17,25 @@ export function CartDrawer() {
     closeCart,
   } = useCartContext();
 
+  /**
+   * Navigate to Shopify checkout, appending the UpPromote linker
+   * parameter so affiliate attribution follows the user cross-domain.
+   */
+  const handleCheckout = useCallback(() => {
+    if (!checkoutUrl) return;
+
+    try {
+      const url = new URL(checkoutUrl);
+      if (typeof upTag !== "undefined") {
+        const linker = upTag("app", "linker");
+        if (linker) url.searchParams.set("_upl", linker);
+      }
+      window.location.href = url.toString();
+    } catch {
+      window.location.href = checkoutUrl;
+    }
+  }, [checkoutUrl]);
+
   // Close on ESC key
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -145,19 +164,15 @@ export function CartDrawer() {
                 Shipping & taxes calculated at checkout.
               </p>
               {checkoutUrl ? (
-                <a
-                  href={checkoutUrl}
-                  className="block w-full"
+                <Button
+                  disabled={isLoading || items.length === 0}
+                  loading={isLoading}
+                  className="w-full"
+                  size="lg"
+                  onClick={handleCheckout}
                 >
-                  <Button
-                    disabled={isLoading || items.length === 0}
-                    loading={isLoading}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Checkout
-                  </Button>
-                </a>
+                  Checkout
+                </Button>
               ) : (
                 <Button
                   disabled

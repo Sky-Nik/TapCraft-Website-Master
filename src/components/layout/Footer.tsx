@@ -13,6 +13,12 @@ const quickLinks = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
+const policyLinks = [
+  { href: "/refund-policy", label: "Refund & Returns" },
+  { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/terms-of-service", label: "Terms of Service" },
+] as const;
+
 const socialLinks = [
 	{ label: "Instagram", href: "https://www.instagram.com/tapcraft_studio/" },
 	// { label: "Facebook", href: "#" },
@@ -116,7 +122,16 @@ export function Footer() {
               Premium custom NFC products designed and crafted with precision.
               Bringing smart technology to your brand identity.
             </p>
-            <p className="text-sm text-gray-500">Melbourne, Australia</p>
+            <div className="space-y-1 text-sm text-gray-500">
+              <p>Melbourne, Australia</p>
+              <p>8 Uganda Street, Boronia 2, Burwood VIC 3125, AU</p>
+              <a
+                href="mailto:nikhilgupta@tapcraft.shop"
+                className="block text-gray-400 transition-colors hover:text-tapcraft-white"
+              >
+                nikhilgupta@tapcraft.shop
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -162,6 +177,25 @@ export function Footer() {
                   >
                     {link.label}
                   </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Policies */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-tapcraft-white">
+              Policies
+            </h4>
+            <ul className="space-y-2">
+              {policyLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-400 transition-colors hover:text-tapcraft-white"
+                  >
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>

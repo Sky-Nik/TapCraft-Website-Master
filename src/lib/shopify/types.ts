@@ -16,6 +16,22 @@ export interface ShopifyImage {
   height: number;
 }
 
+export interface ShopifyVideoSource {
+  url: string;
+  mimeType: string;
+  width: number;
+  height: number;
+}
+
+export interface ShopifyMediaNode {
+  mediaContentType: 'IMAGE' | 'VIDEO' | 'EXTERNAL_VIDEO' | 'MODEL_3D';
+  alt: string | null;
+  image?: ShopifyImage;
+  sources?: ShopifyVideoSource[];
+  embedUrl?: string;
+  host?: 'YOUTUBE' | 'VIMEO';
+}
+
 export interface ShopifyVariant {
   id: string;
   title: string;
@@ -51,6 +67,11 @@ export interface ShopifyProduct {
   variants: {
     edges: {
       node: ShopifyVariant;
+    }[];
+  };
+  media?: {
+    edges: {
+      node: ShopifyMediaNode;
     }[];
   };
   featuredImage: ShopifyImage | null;
@@ -100,5 +121,67 @@ export interface ShopifyCollectionsResponse {
       cursor: string;
     }[];
     pageInfo: ShopifyPageInfo;
+  };
+}
+
+// Cart types
+export interface ShopifyCartLineItem {
+  id: string;
+  quantity: number;
+  merchandise: {
+    id: string;
+    title: string;
+    product: {
+      title: string;
+      handle: string;
+    };
+    price: ShopifyPrice;
+    image: ShopifyImage | null;
+  };
+  cost: {
+    totalAmount: ShopifyPrice;
+  };
+}
+
+export interface ShopifyCart {
+  id: string;
+  checkoutUrl: string;
+  totalQuantity: number;
+  cost: {
+    subtotalAmount: ShopifyPrice;
+    totalAmount: ShopifyPrice;
+  };
+  lines: {
+    edges: {
+      node: ShopifyCartLineItem;
+    }[];
+  };
+}
+
+export interface ShopifyCartResponse {
+  cart: ShopifyCart;
+}
+
+export interface ShopifyCartCreateResponse {
+  cartCreate: {
+    cart: ShopifyCart;
+  };
+}
+
+export interface ShopifyCartLinesAddResponse {
+  cartLinesAdd: {
+    cart: ShopifyCart;
+  };
+}
+
+export interface ShopifyCartLinesUpdateResponse {
+  cartLinesUpdate: {
+    cart: ShopifyCart;
+  };
+}
+
+export interface ShopifyCartLinesRemoveResponse {
+  cartLinesRemove: {
+    cart: ShopifyCart;
   };
 }

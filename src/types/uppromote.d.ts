@@ -32,7 +32,10 @@ interface UpTagFunction {
   (...args: any[]): void;
 }
 
-declare function upTag(...args: Parameters<UpTagFunction>): ReturnType<UpTagFunction>;
+declare function upTag(command: "config", key: string, value: string | string[]): void;
+declare function upTag(command: "event", name: "cart_updated", payload: UpPromoteCartPayload): void;
+declare function upTag(command: "app", name: "linker"): string | undefined;
+declare function upTag(...args: any[]): void;
 
 declare interface Window {
   upDataLayer: any[];

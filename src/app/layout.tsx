@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { ViewTransitions } from "next-view-transitions";
-
-const UPPROMOTE_SHOP =
-  process.env.NEXT_PUBLIC_UPPROMOTE_SHOP ?? "ejkqpi-th.myshopify.com";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { siteMetadata } from "@/lib/seo/metadata";
 import "./globals.css";
+
+const UPPROMOTE_SHOP =
+  process.env.NEXT_PUBLIC_UPPROMOTE_SHOP ?? "ejkqpi-th.myshopify.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -82,7 +82,7 @@ export default function RootLayout({
           {/* UpPromote affiliate tracking – data-layer + config (must run before collect.js) */}
           <Script
             id="uppromote-config"
-            strategy="afterInteractive"
+            strategy="beforeInteractive"
             dangerouslySetInnerHTML={{
               __html: [
                 `window.upDataLayer = window.upDataLayer || [];`,

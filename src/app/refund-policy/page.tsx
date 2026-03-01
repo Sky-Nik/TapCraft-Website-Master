@@ -77,7 +77,7 @@ export default function RefundPolicyPage() {
                 with instructions and a return address.
               </p>
               <p className="text-sm text-gray-500">
-                Return address: [INSERT RETURN ADDRESS]
+                Return address: 8 Uganda Street, Burwood, VIC 3125, AU
               </p>
               <p className="mt-3 text-sm font-medium text-gray-800">
                 Returns sent without prior approval will not be accepted.

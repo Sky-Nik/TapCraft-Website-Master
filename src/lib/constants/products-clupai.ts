@@ -38,6 +38,8 @@ export const PRODUCTS: Product[] = [
     slug: 'smart-business-card-black',
     description:
       'Elevate your networking with our premium 3D-printed NFC business card in sleek matte black. Tap to instantly share your contact details, portfolio, or LinkedIn profile. Crafted from durable PLA with an embedded NTAG215 chip for reliable, long-lasting performance.',
+    descriptionHtml:
+      '<p>Elevate your networking with our premium 3D-printed NFC business card in sleek matte black. Tap to instantly share your contact details, portfolio, or LinkedIn profile. Crafted from durable PLA with an embedded NTAG215 chip for reliable, long-lasting performance.</p>',
     shortDescription:
       'Premium matte black NFC business card with tap-to-share functionality.',
     price: {
@@ -45,6 +47,10 @@ export const PRODUCTS: Product[] = [
       max: 25,
       currency: 'AUD',
     },
+    variants: [
+      { id: 'var_bcard_black_standard', title: 'Standard', availableForSale: true, price: 15, compareAtPrice: null, options: [{ name: 'Type', value: 'Standard' }] },
+      { id: 'var_bcard_black_premium', title: 'Premium', availableForSale: true, price: 25, compareAtPrice: null, options: [{ name: 'Type', value: 'Premium' }] },
+    ],
     specifications: {
       material: 'PLA',
       nfcChip: 'NTAG215',
@@ -80,6 +86,7 @@ export const PRODUCTS: Product[] = [
         height: 800,
       },
     ],
+    media: [],
     category: 'business',
     tags: ['business card', 'nfc', 'matte black', 'professional', 'networking'],
     featured: true,
@@ -93,6 +100,8 @@ export const PRODUCTS: Product[] = [
     slug: 'event-checkin-tag',
     description:
       'Streamline your event management with our NFC check-in tags. Attendees simply tap their phone to check in, access schedules, or connect with other guests. Available in round tag format with customizable branding and NTAG213 chip.',
+    descriptionHtml:
+      '<p>Streamline your event management with our NFC check-in tags. Attendees simply tap their phone to check in, access schedules, or connect with other guests. Available in round tag format with customizable branding and NTAG213 chip.</p>',
     shortDescription:
       'NFC-enabled round tag for instant event check-ins and engagement.',
     price: {
@@ -100,6 +109,10 @@ export const PRODUCTS: Product[] = [
       max: 15,
       currency: 'AUD',
     },
+    variants: [
+      { id: 'var_event_tag_standard', title: 'Standard', availableForSale: true, price: 8, compareAtPrice: null, options: [{ name: 'Type', value: 'Standard' }] },
+      { id: 'var_event_tag_branded', title: 'Branded', availableForSale: true, price: 15, compareAtPrice: null, options: [{ name: 'Type', value: 'Branded' }] },
+    ],
     specifications: {
       material: 'PETG',
       nfcChip: 'NTAG213',
@@ -129,6 +142,7 @@ export const PRODUCTS: Product[] = [
         height: 800,
       },
     ],
+    media: [],
     category: 'events',
     tags: ['event', 'check-in', 'nfc', 'round tag', 'branding'],
     featured: true,
@@ -142,6 +156,8 @@ export const PRODUCTS: Product[] = [
     slug: 'retail-product-tag',
     description:
       'Enhance the in-store experience with NFC-enabled product tags. Customers tap to access detailed product information, reviews, and purchase options. Square tag design with durable resin finish and NTAG216 for maximum data capacity.',
+    descriptionHtml:
+      '<p>Enhance the in-store experience with NFC-enabled product tags. Customers tap to access detailed product information, reviews, and purchase options. Square tag design with durable resin finish and NTAG216 for maximum data capacity.</p>',
     shortDescription:
       'Smart square NFC tag for retail product information and engagement.',
     price: {
@@ -149,6 +165,10 @@ export const PRODUCTS: Product[] = [
       max: 20,
       currency: 'AUD',
     },
+    variants: [
+      { id: 'var_retail_tag_standard', title: 'Standard', availableForSale: true, price: 10, compareAtPrice: null, options: [{ name: 'Type', value: 'Standard' }] },
+      { id: 'var_retail_tag_premium', title: 'Premium', availableForSale: true, price: 20, compareAtPrice: null, options: [{ name: 'Type', value: 'Premium' }] },
+    ],
     specifications: {
       material: 'Resin',
       nfcChip: 'NTAG216',
@@ -178,6 +198,7 @@ export const PRODUCTS: Product[] = [
         height: 800,
       },
     ],
+    media: [],
     category: 'retail',
     tags: ['retail', 'product tag', 'nfc', 'square tag', 'in-store'],
     featured: false,
@@ -191,6 +212,8 @@ export const PRODUCTS: Product[] = [
     slug: 'corporate-prototype',
     description:
       'Perfect for enterprise pilots and proof-of-concept projects. This customizable NFC card is built with premium carbon fiber PLA for a distinctive look and superior durability. Includes NTAG215 chip and full branding customization with your corporate identity.',
+    descriptionHtml:
+      '<p>Perfect for enterprise pilots and proof-of-concept projects. This customizable NFC card is built with premium carbon fiber PLA for a distinctive look and superior durability. Includes NTAG215 chip and full branding customization with your corporate identity.</p>',
     shortDescription:
       'Premium carbon fiber NFC card for corporate branding and prototyping.',
     price: {
@@ -198,6 +221,10 @@ export const PRODUCTS: Product[] = [
       max: 45,
       currency: 'AUD',
     },
+    variants: [
+      { id: 'var_corporate_standard', title: 'Standard', availableForSale: true, price: 25, compareAtPrice: null, options: [{ name: 'Type', value: 'Standard' }] },
+      { id: 'var_corporate_branded', title: 'Fully Branded', availableForSale: true, price: 45, compareAtPrice: null, options: [{ name: 'Type', value: 'Fully Branded' }] },
+    ],
     specifications: {
       material: 'Carbon Fiber PLA',
       nfcChip: 'NTAG215',
@@ -233,6 +260,7 @@ export const PRODUCTS: Product[] = [
         height: 800,
       },
     ],
+    media: [],
     category: 'corporate',
     tags: ['corporate', 'prototype', 'carbon fiber', 'premium', 'enterprise'],
     featured: true,
@@ -246,6 +274,8 @@ export const PRODUCTS: Product[] = [
     slug: 'real-estate-smart-card',
     description:
       'Stand out at open houses and client meetings with a wood-filled PLA NFC card that exudes warmth and professionalism. Tap to share property listings, virtual tours, or your agent profile. NTAG215 chip ensures broad compatibility with all NFC-enabled phones.',
+    descriptionHtml:
+      '<p>Stand out at open houses and client meetings with a wood-filled PLA NFC card that exudes warmth and professionalism. Tap to share property listings, virtual tours, or your agent profile. NTAG215 chip ensures broad compatibility with all NFC-enabled phones.</p>',
     shortDescription:
       'Distinctive wood-finish NFC card for real estate professionals.',
     price: {
@@ -253,6 +283,10 @@ export const PRODUCTS: Product[] = [
       max: 30,
       currency: 'AUD',
     },
+    variants: [
+      { id: 'var_realestate_standard', title: 'Standard', availableForSale: true, price: 18, compareAtPrice: null, options: [{ name: 'Type', value: 'Standard' }] },
+      { id: 'var_realestate_premium', title: 'Premium', availableForSale: true, price: 30, compareAtPrice: null, options: [{ name: 'Type', value: 'Premium' }] },
+    ],
     specifications: {
       material: 'Wood-filled PLA',
       nfcChip: 'NTAG215',
@@ -282,6 +316,7 @@ export const PRODUCTS: Product[] = [
         height: 800,
       },
     ],
+    media: [],
     category: 'business',
     tags: ['real estate', 'wood finish', 'nfc', 'smart card', 'agent'],
     featured: false,
